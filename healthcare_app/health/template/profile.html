@@ -1,0 +1,45 @@
+<!-- health/templates/health/profile.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4>Health Profile</h4>
+                    <a href="{% url 'health_profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Blood Type</h6>
+                            <p>{{ profile.blood_type|default:"Not specified" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Emergency Contact</h6>
+                            <p>
+                                {% if profile.emergency_contact_name %}
+                                    {{ profile.emergency_contact_name }} ({{ profile.emergency_contact_relation }})<br>
+                                    {{ profile.emergency_contact_phone }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <h6>Allergies</h6>
+                    <p>{{ profile.allergies|default:"No allergies recorded"|linebreaks }}</p>
+                    
+                    <h6>Current Medications</h6>
+                    <p>{{ profile.current_medications|default:"No medications recorded"|linebreaks }}</p>
+                    
+                    <h6>Medical Conditions</h6>
+                    <p>{{ profile.medical_conditions|default:"No conditions recorded"|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
