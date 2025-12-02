@@ -1,34 +1,122 @@
-<!-- health/templates/health/profile.html -->
 {% extends 'base.html' %}
+
+{% block title %}Health Profile - Healthcare App{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Health Profile</h1>
+                <div>
+                    <a href="{% url 'health:health_profile_edit' %}" class="btn btn-primary">
+                        <i class="bi bi-pencil-square"></i> Edit Profile
+                    </a>
+                    <a href="{% url 'emergency_qr' %}" class="btn btn-outline-danger">
+                        <i class="bi bi-qr-code"></i> Emergency QR
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Completion Progress -->
+            <div class="progress mt-3" style="height: 10px;">
+                <div class="progress-bar bg-success" role="progressbar" 
+                     style="width: {{ completion_percentage|default:0|floatformat:0 }}%;"
+                     aria-valuenow="{{ completion_percentage|default:0|floatformat:0 }}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">
+                </div>
+            </div>
+            <small class="text-muted">Profile Completion: {{ completion_percentage|default:0|floatformat:0 }}%</small>
+        </div>
+    </div>
+
     <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>Health Profile</h4>
-                    <a href="{% url 'health_profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+        <!-- Left Column - Basic Information -->
+        <div class="col-md-6">
+            <!-- Personal Information Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person"></i> Personal Information
+                    </h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <h6>Blood Type</h6>
-                            <p>{{ profile.blood_type|default:"Not specified" }}</p>
+                        <div class="col-sm-6">
+                            <strong>Name:</strong><br>
+                            {{ profile.user.get_full_name|default:"Not specified" }}
                         </div>
-                        <div class="col-md-6">
-                            <h6>Emergency Contact</h6>
-                            <p>
-                                {% if profile.emergency_contact_name %}
-                                    {{ profile.emergency_contact_name }} ({{ profile.emergency_contact_relation }})<br>
-                                    {{ profile.emergency_contact_phone }}
-                                {% else %}
-                                    Not specified
-                                {% endif %}
-                            </p>
+                        <div class="col-sm-6">
+                            <strong>Date of Birth:</strong><br>
+                            {{ profile.user.date_of_birth|date:"M d, Y"|default:"Not specified" }}
                         </div>
                     </div>
-                    
+                    <div class="row mt-2">
+                        <div class="col-sm-6">
+                            <strong>Gender:</strong><br>
+                            {{ profile.get_gender_display|default:"Not specified" }}
+                        </div>
+                        <div class="col-sm-6">
+                            <strong>Blood Type:</strong><br>
+                            {{ profile.get_blood_type_display|default:"Not specified" }}
+                        </div>
+                    </div>
+                    {% if profile.height and profile.weight %}
+                    <div class="row mt-2">
+                        <div class="col-sm-6">
+                            <strong>Height:</strong><br>
+                            {{ profile.height }} cm
+                        </div>
+                        <div class="col-sm-6">
+                            <strong>Weight:</strong><br>
+                            {{ profile.weight }} kg
+                        </div>
+                    </div>
+                    {% if bmi %}
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <strong>BMI:</strong><br>
+                            {{ bmi }} ({{ bmi_category }})
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Emergency Contact Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-telephone"></i> Emergency Contact
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if profile.emergency_contact_name %}
+                    <p>
+                        <strong>{{ profile.emergency_contact_name }}</strong><br>
+                        {{ profile.emergency_contact_relation }}<br>
+                        <i class="bi bi-phone"></i> {{ profile.emergency_contact_phone }}
+                    </p>
+                    {% else %}
+                    <p class="text-muted">No emergency contact specified</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Medical Information -->
+        <div class="col-md-6">
+            <!-- Medical Information Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-heart-pulse"></i> Medical Information
+                    </h5>
+                </div>
+                <div class="card-body">
                     <h6>Allergies</h6>
                     <p>{{ profile.allergies|default:"No allergies recorded"|linebreaks }}</p>
                     
@@ -37,6 +125,62 @@
                     
                     <h6>Medical Conditions</h6>
                     <p>{{ profile.medical_conditions|default:"No conditions recorded"|linebreaks }}</p>
+                </div>
+            </div>
+
+            <!-- Lifestyle Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-activity"></i> Lifestyle
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <strong>Smoking:</strong><br>
+                            {{ profile.get_smoking_status_display|default:"Not specified" }}
+                        </div>
+                        <div class="col-sm-4">
+                            <strong>Alcohol:</strong><br>
+                            {{ profile.get_alcohol_consumption_display|default:"Not specified" }}
+                        </div>
+                        <div class="col-sm-4">
+                            <strong>Exercise:</strong><br>
+                            {{ profile.get_exercise_frequency_display|default:"Not specified" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Information Row -->
+    <div class="row">
+        <div class="col-12">
+            <!-- Medical History Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clipboard-plus"></i> Medical History
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Surgical History</h6>
+                            <p>{{ profile.surgical_history|default:"No surgical history recorded"|linebreaks }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Family History</h6>
+                            <p>{{ profile.family_history|default:"No family history recorded"|linebreaks }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if profile.additional_notes %}
+                    <h6>Additional Notes</h6>
+                    <p>{{ profile.additional_notes|linebreaks }}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>

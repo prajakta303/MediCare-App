@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Health Profile - Healthcare App{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">
+                        <i class="bi bi-pencil-square"></i> Edit Health Profile
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" class="needs-validation">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.blood_type.id_for_label }}" class="form-label">Blood Type</label>
+                            {{ form.blood_type }}
+                            {% if form.blood_type.errors %}
+                                <div class="text-danger small">
+                                    {{ form.blood_type.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.height.id_for_label }}" class="form-label">Height (cm)</label>
+                                {{ form.height }}
+                                {% if form.height.errors %}
+                                    <div class="text-danger small">{{ form.height.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.weight.id_for_label }}" class="form-label">Weight (kg)</label>
+                                {{ form.weight }}
+                                {% if form.weight.errors %}
+                                    <div class="text-danger small">{{ form.weight.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.allergies.id_for_label }}" class="form-label">Allergies</label>
+                            {{ form.allergies }}
+                            {% if form.allergies.errors %}
+                                <div class="text-danger small">{{ form.allergies.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.current_medications.id_for_label }}" class="form-label">Current Medications</label>
+                            {{ form.current_medications }}
+                            {% if form.current_medications.errors %}
+                                <div class="text-danger small">{{ form.current_medications.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.chronic_conditions.id_for_label }}" class="form-label">Chronic Conditions</label>
+                            {{ form.chronic_conditions }}
+                            {% if form.chronic_conditions.errors %}
+                                <div class="text-danger small">{{ form.chronic_conditions.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.surgical_history.id_for_label }}" class="form-label">Surgical History</label>
+                            {{ form.surgical_history }}
+                            {% if form.surgical_history.errors %}
+                                <div class="text-danger small">{{ form.surgical_history.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.family_history.id_for_label }}" class="form-label">Family History</label>
+                            {{ form.family_history }}
+                            {% if form.family_history.errors %}
+                                <div class="text-danger small">{{ form.family_history.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                            <a href="{% url 'health:health_profile' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select, textarea {
+        border-radius: 0.375rem;
+        border: 1px solid #dee2e6;
+    }
+    
+    .form-control:focus, .form-select:focus, textarea:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+</style>
+{% endblock %}
