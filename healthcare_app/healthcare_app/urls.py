@@ -19,5 +19,18 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('api.urls')),
     path('health/', include('health.urls')),
+]
+
+urlpatterns = [
+    # Django admin
+    path('admin/', admin.site.urls),
+    
+    # Template-based URLs (keep for admin interface)
+    path('users/', include('users.urls')),  # Your existing template URLs
+    
+    # API URLs
+    path('api/auth/', include('users.api_urls')),  # New API endpoints
+    path('api/health/', include('health.urls')),   # Your health app URLs
 ]
